@@ -8,7 +8,6 @@
 #include <iostream>
 #include <string>
 
-//int enter_array(int check_mass[50]); //переделать в класс
 
 class check_enter
 {
