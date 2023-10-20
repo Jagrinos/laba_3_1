@@ -1,0 +1,169 @@
+/*
+Создать класс, описывающий целое число и определяющий, является ли число палиндромом. 
+Определить количество палиндромов среди элементов заданного массива. 
+Создать класс-наследник, хранящий сумму цифр числа. 
+Найти среди элементов данного массива, являющихся палиндромами, палиндром с наименьшей суммой цифр.
+*/
+//отрицательные числа не являются палиндромами
+#include <iostream>
+#include <string>
+
+//int enter_array(int check_mass[50]); //переделать в класс
+
+class check_enter
+{
+	int check_mass[50];
+public:
+	int enter_array();
+	int* get_array()
+	{
+		return check_mass;
+	}
+};
+
+
+class isPalindrom
+{
+	int check_number;
+
+public:
+
+	isPalindrom(int input): check_number(input){} 
+
+	bool palindrom_check();
+};
+
+class amount_of_digits : public isPalindrom
+{
+	int amount = 0;
+public:
+	amount_of_digits(int check_number): isPalindrom(check_number)
+	{
+		
+		while (check_number > 0) //суммируем цифры
+		{
+			int digit = check_number % 10;
+			amount += digit;
+			check_number /= 10;
+		}
+	}
+	int get()
+	{
+		return amount;
+	}
+};
+
+
+void main()
+{
+	setlocale(LC_ALL, "rus");
+
+	int size_of_array;
+	int check_mass[50];
+
+	check_enter test_enter; //введем провереный массив через класс
+
+	size_of_array = test_enter.enter_array(); 
+
+	int* check_mass_right = test_enter.get_array(); 
+
+
+
+	
+
+	int quanity_palindroms = 0; //количество палиндромов
+
+	for (int i = 0; i < size_of_array; i++)
+	{
+		isPalindrom check_array_element(check_mass_right[i]); //кидаем на проверку элемент
+		quanity_palindroms += check_array_element.palindrom_check(); //подсчитываем количество палиндромов
+	}
+
+
+	std::cout << "\nКоличество палиндромов в заданном массиве = " << quanity_palindroms << std::endl;
+
+	bool have_palindrom = false;
+	int min = -1;
+	int min_palindrom;
+
+	for (int i = 0; i < size_of_array; i++) //ищем первый элемент на поиск минимального
+	{
+		amount_of_digits check_array_element(check_mass_right[i]); //кидаем на проверку элемент
+		if (check_array_element.palindrom_check() && min == -1) //ищем первый палиндром для сравнения
+		{
+			min = check_array_element.get();
+			min_palindrom = check_mass_right[i];
+			have_palindrom = true;
+		}
+		if (check_array_element.palindrom_check() && (check_array_element.get() < min)) //ищем min
+		{
+			
+			min = check_array_element.get();
+			min_palindrom = check_mass_right[i];
+		}
+	}
+
+	if (have_palindrom)
+	{
+		std::cout << "\nПалиндром с наименьшей суммой цифр = " << min_palindrom << std::endl;
+	}
+	else
+		std::cout << "\nВ массиве нет палиндромов!" << std::endl;
+
+}
+
+bool isPalindrom::palindrom_check()
+{
+	int check_number_copy = check_number;
+	int original_number = check_number;
+	int revers_number = 0;
+	while (check_number_copy > 0)
+	{
+		int digit = check_number_copy % 10; //получаем последнюю цифру проверяемого числа
+		revers_number = revers_number * 10 + digit; //Формируем обратное число
+		check_number_copy /= 10; //убираем последнюю цифру проверяемого числа
+	}
+	return original_number == revers_number;
+}
+
+int check_enter :: enter_array()
+{
+
+	bool end_enter = true;
+	std::string size_of_array;
+	while (end_enter)
+	{
+		std::cout << "Введите размер массива" << std::endl;
+		std::cin >> size_of_array;
+		try //проверим является ли введенный размер числом
+		{
+			std::stoi(size_of_array);
+			end_enter = false;
+
+			std::cout << "\nВведите элементы массива" << std::endl;
+
+			std::string enter_element;
+
+			for (int i = 0; i < std::stoi(size_of_array); i++)
+			{
+				std::cin >> enter_element;
+				try //проверим является ли введенный элемент числом
+				{
+					std::stoi(enter_element);
+					check_mass[i] = std::stoi(enter_element);
+				}
+				catch (...)
+				{
+					std::cout << "Вы ввели не число!" << std::endl;
+					i = -1;
+				}
+			}
+		}
+		catch (...)
+		{
+			std::cout << "\nВведите натуральное число!\n" << std::endl;
+		}
+	}
+	return std::stoi(size_of_array);
+
+}
